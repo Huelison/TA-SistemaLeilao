@@ -18,88 +18,77 @@ import javax.faces.bean.ViewScoped;
  *
  * @author Huelison
  */
-
 @ManagedBean(name = "controleLeilao")
 @ViewScoped
-public class ControleLeilao implements Serializable{
-    
+public class ControleLeilao implements Serializable {
+
     private Leilao objeto;
     private Boolean editando;
     private Boolean Ativos;
     private Double valorMinimo;
     @EJB
-    private BeanListaLeilao beanListaUsuario;
+    private BeanListaLeilao beanListaLeilao;
 
     public ControleLeilao() {
         objeto = new Leilao();
         editando = false;
         Ativos = true;
-        objeto.setId(1);
-        objeto.setNome("Joao das Nevis");
-        objeto.setTelefone("54 999956091");
-        objeto.setDescricao("Celular nokia 5000");
-        objeto.setValorMinimo(150.00);
-        objeto.setValorVendaAutomatica(500.00);
-        objeto.setDataValidade(Calendar.getInstance());
-        objeto.setMaiorLance(450.00);
-        objeto.setNomeLance("Daiane do Fogo");
-        objeto.setTelefoneLance("54 99956091");
     }
-   
-    public String novoLeilao(){
+
+    public String novoLeilao() {
         objeto = new Leilao();
         editando = true;
-        System.out.println(editando);
         return "index.xhtml/?faces-redirect=true";
     }
 
-    public String salvarLeilao(){
+    public String salvarLeilao() {
         objeto.setMaiorLance(0.0);
-        beanListaUsuario.adicionarLeilaoAtivo(objeto);
+        beanListaLeilao.adicionarLeilaoAtivo(objeto);
         editando = false;
         return "index.xhtml/?faces-redirect=true";
     }
-    
-    public String cancelarLeilao(){
+
+    public String cancelarLeilao() {
         editando = false;
         return "index.xhtml/?faces-redirect=true";
     }
-    
-    public void realizarLance(Leilao obj){
-        if(obj.getMaiorLance()>0){
+
+    public void realizarLance(Leilao obj) {
+
+        if (obj.getMaiorLance() > 0) {
             valorMinimo = obj.getMaiorLance();
-        }else{
+        } else {
             valorMinimo = obj.getValorMinimo();
         }
         objeto = obj;
     }
-    
-    public String salvarLance(){
-        if(objeto.getValorVendaAutomatica()<=objeto.getMaiorLance()){
-            beanListaUsuario.removerLeilaoAtivo(objeto);
-            beanListaUsuario.adicionarLeilaoConcluido(objeto);
+
+    public String salvarLance() {
+        if (objeto.getValorVendaAutomatica() <= objeto.getMaiorLance()) {
+            beanListaLeilao.removerLeilaoAtivo(objeto);
+            beanListaLeilao.adicionarLeilaoConcluido(objeto);
         }
         return "index.xhtml/?faces-redirect=true";
     }
-    
-    public List<Leilao> getListaLeilao(){
-        if(Ativos){ 
-            return beanListaUsuario.getLeiloesAtivos();
-        }else{
-            return beanListaUsuario.getLeiloesConcluidos();
+
+    public List<Leilao> getListaLeilao() {
+        if (Ativos) {
+            return beanListaLeilao.getLeiloesAtivos();
+        } else {
+            return beanListaLeilao.getLeiloesConcluidos();
         }
     }
-    
-    public String alterarLista(Boolean ativos){
+
+    public String alterarLista(Boolean ativos) {
         Ativos = ativos;
         return Listar();
     }
-    
-    public String Listar(){
+
+    public String Listar() {
         editando = false;
         return "index.xhtml/?faces-redirect=true";
     }
-    
+
     public Leilao getObjeto() {
         return objeto;
     }
@@ -116,12 +105,12 @@ public class ControleLeilao implements Serializable{
         this.editando = editando;
     }
 
-    public BeanListaLeilao getBeanListaUsuario() {
-        return beanListaUsuario;
+    public BeanListaLeilao getBeanListaLeilao() {
+        return beanListaLeilao;
     }
 
-    public void setBeanListaUsuario(BeanListaLeilao beanListaUsuario) {
-        this.beanListaUsuario = beanListaUsuario;
+    public void setBeanListaLeilao(BeanListaLeilao beanListaLeilao) {
+        this.beanListaLeilao = beanListaLeilao;
     }
 
     public Boolean getAtivos() {
@@ -139,6 +128,5 @@ public class ControleLeilao implements Serializable{
     public void setValorMinimo(Double valorMinimo) {
         this.valorMinimo = valorMinimo;
     }
-    
-}
 
+}
