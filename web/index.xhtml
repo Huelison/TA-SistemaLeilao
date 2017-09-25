@@ -17,32 +17,34 @@
                                      styleClass="ui-panelgrid-blank"
                                      columnClasses="ui-grid-col-2, ui-grid-col-20">
                             <f:facet name="header">
-                                <p:outputLabel value="Login"/>
+                                <p:outputLabel value="#{msgs['msg.titulo.produto']}"/>
                             </f:facet>
                             <p:outputLabel value="ID"/>
                             <p:inputText value="#{controleLeilao.objeto.id}" readonly="true" size="4"/>
                             <p:outputLabel value="#{msgs['vendedor.nome.titulo']}" for="txtNome"/>
                             <p:inputText value="#{controleLeilao.objeto.nome}" id="txtNome" size="40"
-                                         maxlength="40" required="true" requiredMessage="#{msgs['vendedor.nome.notnull']}"/>
+                                         maxlength="40" required="true" requiredMessage="#{msgs['vendedor.nome.notnull']}"
+                                         placeholder="#{msgs['msg.obrigatorio']}"/>
                             <p:outputLabel value="#{msgs['vendedor.telefone.titulo']}" for="txtTelefone"/>
                             <p:inputMask value="#{controleLeilao.objeto.telefone}" id="txtTelefone" size="40" mask="(99) 99999-9999"
-                                         maxlength="40" required="true" requiredMessage="#{msgs['vendedor.telefone.notnull']}"/>
+                                         maxlength="40" required="true" requiredMessage="#{msgs['vendedor.telefone.notnull']}"
+                                         placeholder="#{msgs['msg.obrigatorio']}"/>
                             <p:outputLabel value="#{msgs['item.descricao.titulo']}" for="txtDescricao"/>
-                            <p:inputTextarea id="txtDescricao" value="#{controleLeilao.objeto.descricao}" required="true" requiredMessage="#{msgs['item.descricao.notnull']}"/>
+                            <p:inputTextarea id="txtDescricao" value="#{controleLeilao.objeto.descricao}" required="true" 
+                                             requiredMessage="#{msgs['item.descricao.notnull']}" placeholder="#{msgs['msg.obrigatorio']}"/>
                             <p:outputLabel value="#{msgs['valor.minimo.titulo']}" for="txtValorMinimo"/>
                             <p:inputNumber id="txtValorMinimo" value="#{controleLeilao.objeto.valorMinimo}"
                                            size="12" maxlength="12" decimalSeparator="." thousandSeparator=","
-                                           symbol="R$ " placeholder="Obrigatório" required="true" requiredMessage="#{msgs['valor.minimo.notnull']}"/>
+                                           symbol="R$ " placeholder="#{msgs['msg.obrigatorio']}" required="true" requiredMessage="#{msgs['valor.minimo.notnull']}"/>
                             <p:outputLabel value="#{msgs['valor.automatico.titulo']}" for="txtValorAutomatica"/>
                             <p:inputNumber id="txtValorAutomatica" value="#{controleLeilao.objeto.valorVendaAutomatica}"
                                            size="12" maxlength="12" decimalSeparator="." thousandSeparator=","
-                                           symbol="R$ " placeholder="Obrigatório" required="true" 
+                                           symbol="R$ " placeholder="#{msgs['msg.obrigatorio']}" required="true" 
                                            requiredMessage="#{msgs['valor.automatico.notnull']}"/>
-
                             <p:outputLabel value="#{msgs['data.validade.titulo']}" for="txtValidade"/>
                             <p:calendar value="#{controleLeilao.objeto.dataValidade}" 
                                         mask="true" pattern="dd/MM/yyyy HH:mm:ss"
-                                        required="true"
+                                        required="true" placeholder="#{msgs['msg.obrigatorio']}"
                                         requiredMessage="#{msgs['data.validade.notnull']}"
                                         id="txtValidade">
                                 <f:converter converterId="converterCalendar"/>
@@ -105,47 +107,16 @@
                         </p:column> 
                         <p:column headerText="#{msgs['msg.acao']}" rendered="#{controleLeilao.ativos}">
                             <div align="center" >
-                                <p:commandButton value="#{msgs['botao.lance']}" actionListener="#{controleLeilao.realizarLance(obj)}"
-                                                 oncomplete="PF('dlg').show()"
-                                                 update="formEdicao formListagem formLance" 
+                                <p:commandButton value="#{msgs['botao.lance']}" 
+                                                 action="#{controleLeilao.realizarLance(obj)}"
+                                                 ajax="false"
+                                                 update="formEdicao formListagem" 
                                                  rendered="#{controleLeilao.ativos}"/>
                             </div>
                         </p:column>                       
                     </p:dataTable>
                 </h:panelGroup>
             </h:form>
-            <p:dialog header="#{msgs['botao.lance']}" widgetVar="dlg"
-                      resizable="false" modal="true"  >
-                <h:form id="formLance" prependId="false">
-                    <p:growl id="growl"/>   
-                    <p:panelGrid columns="2" layout="grid"
-                                 styleClass="ui-panelgrid-blank"
-                                 columnClasses="ui-grid-col-2, ui-grid-col-20">
-                        <f:facet name="header">
-                            <p:outputLabel value="#{msgs['botao.lance']}"/>
-                            <br></br>
-                            <p:outputLabel  value="#{msgs['msg.Lance']} #{controleLeilao.objeto.descricao}"/> 
-                        </f:facet>
-                        <p:outputLabel value="#{msgs['valor.lance.titulo']}" for="txtValorLance"/>
-                        <p:inputNumber id="txtValorLance" value="#{controleLeilao.objeto.maiorLance}"
-                                       size="12" maxlength="12" decimalSeparator="." thousandSeparator=","
-                                       symbol="R$ " placeholder="Obrigatório" required="true" 
-                                       requiredMessage="#{msgs['valor.lance.notnull']}">
-                            <!--<p:ajax event="blur" listener=""/>-->
-                        </p:inputNumber>
-                        <p:outputLabel value="#{msgs['comprador.nome.titulo']}" for="txtNomeComprador"/>
-                        <p:inputText value="#{controleLeilao.objeto.nomeLance}" id="txtNomeComprador" size="40"
-                                     maxlength="40" required="true" requiredMessage="#{msgs['comprador.NOME.notnull']}"/>
-                        <p:outputLabel value="#{msgs['comprador.telefone.titulo']}" for="txtTelefoneComprador"/>
-                        <p:inputMask value="#{controleLeilao.objeto.telefoneLance}" id="txtTelefoneComprador" size="40" mask="(99) 99999-9999"
-                                     maxlength="40" required="true" requiredMessage="#{msgs['comprador.telefone.notnull']}"/>
-                        <p:commandButton value="#{msgs['botao.salvar']}" icon="ui-icon-disk"
-                                         actionListener="#{controleLeilao.salvarLance()}"
-                                         update="formEdicao formListagem"
-                                         oncomplete="if (!args.validationFailed) {PF('dlg').hide();}"/>
-                    </p:panelGrid>
-                </h:form>
-            </p:dialog>
         </ui:define>
     </ui:composition>
 </html>

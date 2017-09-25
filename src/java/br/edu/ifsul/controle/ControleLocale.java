@@ -7,16 +7,16 @@ package br.edu.ifsul.controle;
 
 import java.io.Serializable;
 import java.util.Locale;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 /**
  *
  * @author Huelison
  */
-@ManagedBean
+@Named(value = "controleLocale")
 @SessionScoped
 public class ControleLocale implements Serializable{
     private Locale currentLocale = new Locale("pt","BR");

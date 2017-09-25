@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets" 
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:b="http://bootsfaces.net/ui">
+    <ui:composition template="templates/template.xhtml">
+        <ui:define name="titulo">Sistema de Leilões</ui:define>
+        <ui:define name="conteudo">
+            <h:form id="formListagem">
+                <h:panelGroup >
+                    <p:messages/>
+                    <h:form id="formLance" prependId="false">
+                        <p:panelGrid columns="2" layout="grid"
+                                     styleClass="ui-panelgrid-blank"
+                                     columnClasses="ui-grid-col-2, ui-grid-col-20">
+                            <f:facet name="header">
+                                <p:outputLabel value="#{msgs['botao.lance']}"/>
+                                <br></br>
+                                <p:outputLabel  value="#{msgs['msg.Lance']} #{controleLeilao.objeto.descricao}"/> 
+                            </f:facet>
+                            <p:outputLabel value="#{msgs['valor.lance.titulo']}" for="txtValorLance"/>
+                            <p:inputNumber id="txtValorLance" value="#{controleLeilao.objeto.maiorLance}"
+                                           size="12" maxlength="12" decimalSeparator="." thousandSeparator=","
+                                           symbol="R$ " placeholder="#{msgs['msg.obrigatorio']}" required="true" 
+                                           requiredMessage="#{msgs['valor.lance.notnull']}">
+                            </p:inputNumber>
+                            <p:outputLabel value="#{msgs['comprador.nome.titulo']}" for="txtNomeComprador"/>
+                            <p:inputText value="#{controleLeilao.objeto.nomeLance}" id="txtNomeComprador" size="40"
+                                         maxlength="40" required="true" requiredMessage="#{msgs['comprador.nome.notnull']}"
+                                         placeholder="#{msgs['msg.obrigatorio']}"/>
+                            <p:outputLabel value="#{msgs['comprador.telefone.titulo']}" for="txtTelefoneComprador"/>
+                            <p:inputMask value="#{controleLeilao.objeto.telefoneLance}" id="txtTelefoneComprador" size="40" mask="(99) 99999-9999"
+                                         maxlength="40" required="true" requiredMessage="#{msgs['comprador.telefone.notnull']}"
+                                         placeholder="#{msgs['msg.obrigatorio']}"/>
+                            <p:commandButton value="#{msgs['botao.salvar']}" icon="ui-icon-disk"
+                                             ajax="false"
+                                             action="#{controleLeilao.salvarLance()}"
+                                             update="formListagem"/>
+                        </p:panelGrid>
+                    </h:form>
+                </h:panelGroup>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+</html>
+

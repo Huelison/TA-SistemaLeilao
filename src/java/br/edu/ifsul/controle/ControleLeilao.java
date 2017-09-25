@@ -7,19 +7,22 @@ package br.edu.ifsul.controle;
 
 import br.edu.ifsul.ejb.BeanListaLeilao;
 import br.edu.ifsul.modelo.Leilao;
+import br.edu.ifsul.util.Util;
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.List;
 import javax.ejb.EJB;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.inject.Named;
 
 /**
  *
  * @author Huelison
  */
-@ManagedBean(name = "controleLeilao")
-@ViewScoped
+@Named(value = "controleLeilao")
+@SessionScoped
 public class ControleLeilao implements Serializable {
 
     private Leilao objeto;
@@ -42,9 +45,16 @@ public class ControleLeilao implements Serializable {
     }
 
     public String salvarLeilao() {
-        objeto.setMaiorLance(0.0);
-        beanListaLeilao.adicionarLeilaoAtivo(objeto);
-        editando = false;
+        if (objeto.getValorMinimo() > objeto.getValorVendaAutomatica()) {
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, Util.getMensagemInternacionalizada("msg.ErroValorMinimo"), "");
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        } else {
+            objeto.setMaiorLance(0.0);
+            beanListaLeilao.adicionarLeilaoAtivo(objeto);
+            editando = false;
+            FacesMessage msg = new FacesMessage(Util.getMensagemInternacionalizada("msg.SalvarProduto"));
+            FacesContext.getCurrentInstance().addMessage(null, msg);
+        }
         return "index.xhtml/?faces-redirect=true";
     }
 
@@ -53,7 +63,7 @@ public class ControleLeilao implements Serializable {
         return "index.xhtml/?faces-redirect=true";
     }
 
-    public void realizarLance(Leilao obj) {
+    public String realizarLance(Leilao obj) {
 
         if (obj.getMaiorLance() > 0) {
             valorMinimo = obj.getMaiorLance();
@@ -61,14 +71,34 @@ public class ControleLeilao implements Serializable {
             valorMinimo = obj.getValorMinimo();
         }
         objeto = obj;
+        return "lance.xhtml/?faces-redirect=true";
     }
 
     public String salvarLance() {
-        if (objeto.getValorVendaAutomatica() <= objeto.getMaiorLance()) {
-            beanListaLeilao.removerLeilaoAtivo(objeto);
-            beanListaLeilao.adicionarLeilaoConcluido(objeto);
+        System.out.println("Passou aqui");
+        if (objeto.getMaiorLance() > getValorMinimo()) {
+            if (objeto.getValorVendaAutomatica() <= objeto.getMaiorLance()) {
+                beanListaLeilao.removerLeilaoAtivo(objeto);
+                beanListaLeilao.adicionarLeilaoConcluido(objeto);
+                FacesMessage msg = new FacesMessage(Util.getMensagemInternacionalizada("msg.VencerLance"));
+                FacesContext contexto = FacesContext.getCurrentInstance();
+                contexto.getExternalContext().getFlash().setKeepMessages(true);
+                contexto.addMessage(null, msg);
+            } else {
+                FacesMessage msg = new FacesMessage(Util.getMensagemInternacionalizada("msg.SalvarLance"));
+                FacesContext contexto = FacesContext.getCurrentInstance();
+                contexto.getExternalContext().getFlash().setKeepMessages(true);
+                contexto.addMessage(null, msg);
+            }
+            return "index.xhtml?faces-redirect=true";
+        } else {
+            System.out.println(Util.getMensagemInternacionalizada("msg.ErroLanceMinimo"));
+            FacesMessage msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, Util.getMensagemInternacionalizada("msg.ErroLanceMinimo"), "");
+            FacesContext contexto = FacesContext.getCurrentInstance();
+            contexto.getExternalContext().getFlash().setKeepMessages(true);
+            contexto.addMessage(null, msg);
+            return "lance.xhtml?faces-redirect=true";
         }
-        return "index.xhtml/?faces-redirect=true";
     }
 
     public List<Leilao> getListaLeilao() {
